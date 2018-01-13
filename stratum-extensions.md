@@ -1,5 +1,5 @@
-Stratum protocol extensions
-===========================
+# Stratum protocol extensions
+
 
 (Adding version rolling support to stratum)
 
@@ -40,14 +40,14 @@ code**.
 Currently, the following extensions are defined: 
 
 - **"version-rolling"**
-- **"sp-telemetry"**
 - **"minimum-difficulty"**
+- **"subscribe-extranonce"**
 - **"promise-protocol"**
 - **"binary-protocol"**
+- _more to be published_
 
 
-Additional data types
----------------------
+### Additional data types
 
 The following names are used as type aliases, making the message
 description easier.
@@ -65,28 +65,66 @@ description easier.
   *String* = Error message containing information about what went wrong.
 
 
-Request "mining.configure"
---------------------------
+## Request "mining.configure"
 
-This message (JSON RPC Request) is the **first message** sent by a
-miner after connection with a server is established. The client uses
-the message to advertise its features and to request/allow some
+This message (JSON RPC Request) SHOULD be the **first message** sent
+by a miner after connection with a server is established. The client
+uses the message to advertise its features and to request/allow some
 protocol extensions.
 
 The reason for being the first is that we want the implementation and
-possible interactions as easy as possible.
+possible interactions as easy and simple as possible. An extensions
+can define explicitly what does a repeated configuration of that
+extension mean.
+
+Each extension code provides a namespace for its extension parameters
+and extension return values. By convention, the names are formed from
+extension codes by adding "." and a parameter name. The same applies
+for the return values, which are transfered in a result map
+too. E.g. "version-rolling.mask" is a name of parameter "mask" of
+extension "version-rolling".
+
+**Parameters**:
+
+ - **extensions** (required, List of *TExtensionCode*)
+
+   Each string in the list must be a valid extension code. The meaning
+   of each code is described independently as part of the extension
+   definition.
+
+   A miner SHOULD advertise all its available features.
+
+ - **extension-parameters** (required, *Map of (String -> Any)*)
+
+   Parameters of the requested/allowed extensions from the first
+   parameter.
+
+
+**Return value**:
+
+ - *Map of (String -> Any)*
+
+   Each code from **extensions** list MUST have a defined return value
+   (_TExtensionCode_ -> _TExtensionResult_). This way the miner knows
+   if the extension is activated or
+   not. E.g. ```{"version-rolling":false}``` for unsupported version
+   rolling.
+
+   Some extensions need additional information to be delivered to the
+   miner. The return value map is used for this purpose.
+
 
 Example request (new-lines added):
 ```
 {"method": "mining.configure",
  "id": 1, 
- "params": [["sp-telemetry", "version-rolling"],
-            {"sp-telemetry.version": 1,
-			 "version-rolling.mask": "00fff000"}]}
+ "params": [["minimum-difficulty", "version-rolling"],
+            {"minimum-difficulty.value": 2048,
+	     "version-rolling.mask": "00fff000"}]}
 ```
 
-(The miner requests extension ```"version-rolling"``` and allows extension
-```"sp-telemetry"```. It sets parameters according to the extensions'
+(The miner requests extensions ```"version-rolling"``` and 
+```"minimum-difficulty"```. It sets parameters according to the extensions'
 definitions.)
 
 Example result (new-lines added):
@@ -95,39 +133,12 @@ Example result (new-lines added):
  "id": 1,
  "result": {"version-rolling": true,
             "version-rolling.mask": "007f8000",
-			"sp-telemetry": true}}
+	    "minimum-difficulty": true}}
 ```
 
-**Parameters**:
+# Defined extensions
 
- - **requested-extensions** (required, List of *TExtensionCode*)
- 
-   Each string must be a valid extension code. The meaning of each
-   code is described independently as part of the extension
-   definition.
-   
- - **extension-parameters** (required, *Map of (String -> Any)*)
- 
-
-Each extension code provides a namespace for its parameters and
-extension return values. By convention, extension parameter names are
-formed from extension codes by adding "." and parameter name. The same
-applies for the return values, which are transfered in a map
-too. E.g. "version-rolling.mask" is a parameter to extension
-"version-rolling".
-   
-
-**Return value**: _Map of (String -> Any)_
-    
-  Each code from **requested-extensions** list SHOULD have a defined
-  return value (_TExtensionCode_ -> _TExtensionResult_). This way
-
-
-Defined extensions
-==================
-
-Extension "version-rolling"
----------------------------
+## Extension "version-rolling"
 
 This extension allows the miner to change value of some bits in the
 version field in a block header. Currently there are no standard bits
@@ -187,7 +198,7 @@ Example result (unknown extension):
    when a proxy needs to negotiate the best mask for its future
    clients.
 
-Notification **"mining.set_version_mask"**:
+### Notification **"mining.set_version_mask"**
 
 Server notifies the miner about a new mask valid for the
 connection. This message can be sent any time after successful setup
@@ -209,23 +220,23 @@ Example:
 
 ```
 
-Changes in request **"mining.submit"**:
+### Changes in request **"mining.submit"**
 
 Immediatelly after successful activation of version-rolling extension
-(result message to "mining.configure" sent by server), the server MUST
-accept one additional parameter of the message "mining.submit". Client
-MUST send one additional parameter, **version_bits** (6th, after
+(result to "mining.configure" sent by server), the server MUST accept
+one additional parameter of the message "mining.submit". Client MUST
+send one additional parameter, **version_bits** (6th parameter, after
 *worker_name*, *job_id*, *extranonce2*, *ntime* and *nonce*).
 
 
-**Additional parameter to "mining.submit"**:
+**Additional parameter**:
 
-- *version_bits* (required, *TMask*) - 
+- *version_bits* (required, *TMask*) - Version bits set by miner.
 
   Miner can set only bits corresponding to the set bits in the last
   received mask from the server either as response to
   "mining.configure" or "mining.set_version_mask" notification
-  (```last_mask```): ```version_bits & ~last_mask == 0```.
+  (```last_mask```). This must hold: ```version_bits & ~last_mask ==  0```.
   
   nVersion for the submit is computed by the server as follows:
   ``` nVersion = (job_version & ~last_mask) | (version_bits & last_mask)```, 
@@ -233,34 +244,37 @@ MUST send one additional parameter, **version_bits** (6th, after
   of job with id ```job_id```.
 
 
-Extension "minimum-difficulty"
-------------------------------
+## Extension "minimum-difficulty"
 
 This extension allows miner to request a minimum difficulty for the
 connected machine. It solves a problem in the original stratum
-protocol when a reaction to a "mining.subscribe" is sending a mining
-job but there is no
+protocol where there is no way how to communicate hard limit of the
+connected device.
 
 **Extension parameters**:
-   - **minimum-difficulty** (required, *Integer/Float*, >= 0) 
+ - **"minimum-difficulty.value"** (required, *Integer/Float*, >= 0)
+ 
+   The minimum difficulty value acceptable for the miner/connection.
+   The value can be 0 for essentially disabling the feature.
 
 **Extension return values**:
-   - **minimum-difficulty** (required, *TExtensionResult*)
+ - **"minimum-difficulty"** (required, *TExtensionResult*)
+   
+   Whether the minimum difficulty was accepted or not.
 
 
-Extension "subscribe-extranonce"
---------------------------------
+This extension can be configured multiple times by calling
+"mining.configure" with "minimum-difficulty" code again. 
+
+
+## Extension "subscribe-extranonce"
 
 Parameter-less extension. Miner advertises its capability of receiving
 message **"mining.set_extranonce"** message (useful for hash rate
 routing scenarios).
 
-Notification **mining.set_extranonce**:
+### Notification **mining.set_extranonce**:
  - TBD
-
-Extension "sp-telemetry"
-------------------------
- - To be published.
 
 Extension "binary-protocol"
 ---------------------------
@@ -269,3 +283,4 @@ Extension "binary-protocol"
 Extension "promise-protocol"
 ----------------------------
  - To be published
+
