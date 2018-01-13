@@ -109,7 +109,7 @@ Example result (new-lines added):
  - **extension-parameters** (required, *Map of (String -> Any)*)
  
 
-Each extension code provide a namespace for its parameters and
+Each extension code provides a namespace for its parameters and
 extension return values. By convention, extension parameter names are
 formed from extension codes by adding "." and parameter name. The same
 applies for the return values, which are transfered in a map
@@ -117,7 +117,7 @@ too. E.g. "version-rolling.mask" is a parameter to extension
 "version-rolling".
    
 
-**Retrun value**: _Map of (String -> Any)_
+**Return value**: _Map of (String -> Any)_
     
   Each code from **requested-extensions** list SHOULD have a defined
   return value (_TExtensionCode_ -> _TExtensionResult_). This way
@@ -129,7 +129,7 @@ Defined extensions
 Extension "version-rolling"
 ---------------------------
 
-This extension allows to miner to change value of some bits in the
+This extension allows the miner to change value of some bits in the
 version field in a block header. Currently there are no standard bits
 used for version rolling so they need to be negotioated between a
 miner and a server.
@@ -142,7 +142,7 @@ A server typically allows to change only some of the version bits
 fixed. E.g. because the block needs to be valid or some signalling is
 in place.
 
-Ther server responds to the configuration message by sending a mask
+The server responds to the configuration message by sending a mask
 with common bits intersection of the miner's mask and its a mask
 (```response = server_mask & miner_mask```)
 
@@ -179,20 +179,20 @@ Example result (unknown extension):
  
  - **"version-rolling.mask"** (required, *TMask*)
   
-   Bits set to 1 are allowed to be changed by the mininer. If a miner
-   will change bits with mask value 0, the server will reject the submit.
+   Bits set to 1 are allowed to be changed by the miner. If a miner
+   changes bits with mask value 0, the server will reject the submit.
    
    The server SHOULD return the largest mask possible (as many bits
    set to 1 as possible). This can be useful in a mining proxy setup
-   when a proxy needs to negotiate the best mask for it's future
+   when a proxy needs to negotiate the best mask for its future
    clients.
 
 Notification **"mining.set_version_mask"**:
 
 Server notifies the miner about a new mask valid for the
-connection. This message can be sent any time after successfull setup
+connection. This message can be sent any time after successful setup
 of the version rolling by "mining.configure" message. The new mask is
-valid **immediatelly**, so that the server doesn't wait for the next
+valid **immediately**, so that the server doesn't wait for the next
 job.
 
 **TODO**: Is it really better to use the mask immediatelly or "next
@@ -223,7 +223,7 @@ MUST send one additional parameter, **version_bits** (6th, after
 - *version_bits* (required, *TMask*) - 
 
   Miner can set only bits corresponding to the set bits in the last
-  recevied mask from the server either as response to
+  received mask from the server either as response to
   "mining.configure" or "mining.set_version_mask" notification
   (```last_mask```): ```version_bits & ~last_mask == 0```.
   
@@ -236,7 +236,7 @@ MUST send one additional parameter, **version_bits** (6th, after
 Extension "minimum-difficulty"
 ------------------------------
 
-This extension allows miner to request a minimum difficutly for the
+This extension allows miner to request a minimum difficulty for the
 connected machine. It solves a problem in the original stratum
 protocol when a reaction to a "mining.subscribe" is sending a mining
 job but there is no
@@ -260,7 +260,7 @@ Notification **mining.set_extranonce**:
 
 Extension "sp-telemetry"
 ------------------------
- - To be publised.
+ - To be published.
 
 Extension "binary-protocol"
 ---------------------------
