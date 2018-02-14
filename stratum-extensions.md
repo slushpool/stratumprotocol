@@ -273,6 +273,24 @@ Parameter-less extension. Miner advertises its capability of receiving
 message **"mining.set_extranonce"** message (useful for hash rate
 routing scenarios).
 
+## Extension "info"
+
+Miner provides additional text-based information.
+
+**Extension parameters**:
+ - **"info.connection-url"** (required, *String*)
+ Exact URL used by the mining software to connect to the stratum server.
+ 
+ - **"info.hw-version"** (required, *String*)
+ Manufacturer specific hardware revision string.
+ 
+ - **"info.sw-version"** (required, *String*)
+ Manufacturer specific software version
+ 
+ - **"info.hw-id"** (required, *String*)
+ Unique  identifier of the mining device
+
+
 ### Notification **mining.set_extranonce**:
  - TBD
 
