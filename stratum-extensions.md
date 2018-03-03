@@ -22,10 +22,10 @@ servers.
 
 We can use the opportunity to make one backward incompatible
 change to the protocol to support multiple extensions in the
-future. In a way that a miner can advertise its cababilities and at
+future. In a way that a miner can advertise its capabilities and at
 the same time it can request some needed features from server.
 
-It is preferrable that the same mechanism for feature negotiation can
+It is preferable that the same mechanism for feature negotiation can
 be used for not yet known features. It should be easy to implement in
 the mining software too.
 
@@ -80,7 +80,7 @@ extension mean.
 Each extension code provides a namespace for its extension parameters
 and extension return values. By convention, the names are formed from
 extension codes by adding "." and a parameter name. The same applies
-for the return values, which are transfered in a result map
+for the return values, which are transferred in a result map
 too. E.g. "version-rolling.mask" is a name of parameter "mask" of
 extension "version-rolling".
 
@@ -142,15 +142,15 @@ Example result (new-lines added):
 
 This extension allows the miner to change value of some bits in the
 version field in a block header. Currently there are no standard bits
-used for version rolling so they need to be negotioated between a
+used for version rolling so they need to be negotiated between a
 miner and a server.
 
 A miner sends to the server a mask describing bits which the miner is
-capable to change. 1 = changable bit, 0 = not changable (```miner_mask```).
+capable to change. 1 = changeable bit, 0 = not changeable (```miner_mask```).
 
 A server typically allows to change only some of the version bits
 (```server_mask```) and the rest of the version bits are
-fixed. E.g. because the block needs to be valid or some signalling is
+fixed. E.g. because the block needs to be valid or some signaling is
 in place.
 
 The server responds to the configuration message by sending a mask
@@ -206,7 +206,7 @@ of the version rolling by "mining.configure" message. The new mask is
 valid **immediately**, so that the server doesn't wait for the next
 job.
 
-**TODO**: Is it really better to use the mask immediatelly or "next
+**TODO**: Is it really better to use the mask immediately or "next
   job" approach would be better?
 
 **Parameters**:
@@ -222,7 +222,7 @@ Example:
 
 ### Changes in request **"mining.submit"**
 
-Immediatelly after successful activation of version-rolling extension
+Immediately after successful activation of version-rolling extension
 (result to "mining.configure" sent by server), the server MUST accept
 one additional parameter of the message "mining.submit". Client MUST
 send one additional parameter, **version_bits** (6th parameter, after
