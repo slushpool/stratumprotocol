@@ -197,7 +197,9 @@ Example result (unknown extension):
    The server SHOULD return the largest mask possible (as many bits
    set to 1 as possible). This can be useful in a mining proxy setup
    when a proxy needs to negotiate the best mask for its future
-   clients.
+   clients. There is a BIP(TBD) describing available nVersion
+   bits. The server should pick a mask that preferably covers all
+   bits specified in the BIP.
 
  - **"version-rolling.min-bit-count"** (required, *TMask*)
 
