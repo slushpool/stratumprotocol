@@ -120,7 +120,7 @@ Example request (new-lines added):
  "id": 1, 
  "params": [["minimum-difficulty", "version-rolling"],
             {"minimum-difficulty.value": 2048,
-	     "version-rolling.mask": "00fff000"}]}
+	     "version-rolling.mask": "00fff000", "version-rolling.min-bit-count": 2}]}
 ```
 
 (The miner requests extensions ```"version-rolling"``` and 
@@ -146,7 +146,8 @@ used for version rolling so they need to be negotiated between a
 miner and a server.
 
 A miner sends to the server a mask describing bits which the miner is
-capable to change. 1 = changeable bit, 0 = not changeable (```miner_mask```).
+capable to change. 1 = changeable bit, 0 = not changeable (```miner_mask```)
+and a minimum number of bits that it needs for efficient version rolling.
 
 A server typically allows to change only some of the version bits
 (```server_mask```) and the rest of the version bits are
@@ -157,9 +158,9 @@ The server responds to the configuration message by sending a mask
 with common bits intersection of the miner's mask and its a mask
 (```response = server_mask & miner_mask```)
 
-Example request:
+Example request (a miner capable of changing any 2 bits from a 12-bit mask):
 ```
-{"method": "mining.configure", "id": 1, "params": [["version-rolling"], {"version-rolling.mask": "00fff000"}]}
+{"method": "mining.configure", "id": 1, "params": [["version-rolling"], {"version-rolling.mask": "00fff000", "version-rolling.min-bit-count": 2}]}
 ```
 
 Example result (success):
@@ -197,6 +198,16 @@ Example result (unknown extension):
    set to 1 as possible). This can be useful in a mining proxy setup
    when a proxy needs to negotiate the best mask for its future
    clients.
+
+ - **"version-rolling.min-bit-count"** (required, *TMask*)
+
+   The miner also provides a minimum number of bits that it needs for
+   efficient version rolling in hardware. Note that this parameter
+   provides important diagnostic information to the pool server. If
+   the requested bit count exceeds pool server limit, the miner always
+   has the chance to operate in a degraded mode without using full
+   hashing power. The pool server should NOT terminate miner
+   connection if this rare mismatch case occurs.
 
 ### Notification **"mining.set_version_mask"**
 
