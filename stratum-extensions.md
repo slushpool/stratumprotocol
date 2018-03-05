@@ -291,16 +291,16 @@ routing scenarios).
 Miner provides additional text-based information.
 
 **Extension parameters**:
- - **"info.connection-url"** (required, *String*)
+ - **"info.connection-url"** (optional, *String*)
  Exact URL used by the mining software to connect to the stratum server.
  
- - **"info.hw-version"** (required, *String*)
+ - **"info.hw-version"** (optional, *String*)
  Manufacturer specific hardware revision string.
  
- - **"info.sw-version"** (required, *String*)
+ - **"info.sw-version"** (optional, *String*)
  Manufacturer specific software version
  
- - **"info.hw-id"** (required, *String*)
+ - **"info.hw-id"** (optional, *String*)
  Unique  identifier of the mining device
 
 
