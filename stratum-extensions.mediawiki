@@ -270,14 +270,3 @@ Miner provides additional text-based information.
 * '''"info.hw-id"''' (optional, ''String'')
 ::- Unique  identifier of the mining device
 
-
-===Notification '''mining.set_extranonce'''===
- - TBD
-
-Extension "binary-protocol"
----------------------------
- - To be published
-
-Extension "promise-protocol"
-----------------------------
- - To be published
