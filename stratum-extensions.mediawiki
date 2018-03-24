@@ -20,6 +20,10 @@ extensions. At the same time, one of the important extensions that is
 specified by this BIP is configuration of bits on nVersion field of
 bitcoin block header use for "version rolling".
 
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+document are to be interpreted as described in RFC 2119.
+
 ==Motivation==
 
 The initial motivation for specifying some general support for stratum
