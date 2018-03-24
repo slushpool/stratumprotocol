@@ -4,11 +4,13 @@
   Title: Stratum protocol extensions
   Author: Pavel Moravec <pavel.moravec@braiins.cz>
 	  Jan Capek <jan.capek@braiins.cz>
-  Comments-Summary: Unanimously Discourage for implementation
+  Comments-Summary: No comments yet.
   Comments-URI: https://github.com/bitcoin/bips/wiki/Comments:BIP-????
   Status: Draft
   Type: Informational
   Created: 2018-03-10
+  License: BSD-3-Clause
+           CC0-1.0
 </pre>
 
 ==Abstract==
@@ -120,7 +122,7 @@ Example request (new-lines added):
   "id": 1,
   "params": [["minimum-difficulty", "version-rolling"],
 	     {"minimum-difficulty.value": 2048,
-	      "version-rolling.mask": "00fff000", "version-rolling.min-bit-count": 2}]}
+	      "version-rolling.mask": "1fffe000", "version-rolling.min-bit-count": 2}]}
 
 (The miner requests extensions <code>"version-rolling"</code> and
 <code>"minimum-difficulty"</code>. It sets the parameters according to the extensions'
@@ -131,7 +133,7 @@ Example result (new-lines added):
  {"error": null,
   "id": 1,
   "result": {"version-rolling": true,
-	     "version-rolling.mask": "007f8000",
+	     "version-rolling.mask": "18000000",
 	     "minimum-difficulty": true}}
 
 
@@ -157,14 +159,14 @@ The server responds to the configuration message by sending a mask
 with common bits intersection of the miner's mask and its a mask
 (<code>response = server_mask & miner_mask</code>)
 
-Example request (a miner capable of changing any 2 bits from a 12-bit mask):
+Example request (a miner capable of changing any 2 bits from a 16-bit mask):
 
- {"method": "mining.configure", "id": 1, "params": [["version-rolling"], {"version-rolling.mask": "00fff000", "version-rolling.min-bit-count": 2}]}
+ {"method": "mining.configure", "id": 1, "params": [["version-rolling"], {"version-rolling.mask": "1fffe000", "version-rolling.min-bit-count": 2}]}
 
 
 Example result (success):
 
- {"error": null, "id": 1, "result": {"version-rolling": true, "version-rolling.mask": "007f8000"}}
+ {"error": null, "id": 1, "result": {"version-rolling": true, "version-rolling.mask": "18000000"}}
 
 
 Example result (unknown extension):
@@ -186,7 +188,7 @@ send the mask, in this case a default full mask is used.
 
 * '''"version-rolling.mask"''' (required, ''TMask'')
 ::- Bits set to 1 are allowed to be changed by the miner. If a miner changes bits with mask value 0, the server will reject the submit.
-::- The server SHOULD return the largest mask possible (as many bits set to 1 as possible). This can be useful in a mining proxy setup when a proxy needs to negotiate the best mask for its future clients. There is a BIP(TBD) describing available nVersion bits. The server should pick a mask that preferably covers all bits specified in the BIP.
+::- The server SHOULD return the largest mask possible (as many bits set to 1 as possible). This can be useful in a mining proxy setup when a proxy needs to negotiate the best mask for its future clients. There is a [Draft BIP](https://github.com/bitcoin/bips/pull/661/files) describing available nVersion bits. The server should pick a mask that preferably covers all bits specified in the BIP.
 
 * '''"version-rolling.min-bit-count"''' (required, ''TMask'')
 ::- The miner also provides a minimum number of bits that it needs for efficient version rolling in hardware. Note that this parameter provides important diagnostic information to the pool server. If the requested bit count exceeds the limit of the pool server, the miner always has the chance to operate in a degraded mode without using full hashing power. The pool server should NOT terminate miner connection if this rare mismatch case occurs.
@@ -267,3 +269,6 @@ Miner provides additional text-based information.
 * '''"info.hw-id"''' (optional, ''String'')
 ::- Unique  identifier of the mining device
 
+==Copyright==
+
+This document is dual licensed as BSD 3-clause, and Creative Commons CC0 1.0 Universal.
