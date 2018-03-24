@@ -105,9 +105,7 @@ extension "version-rolling".
 '''Parameters''':
 
 * '''extensions''' (required, List of ''TExtensionCode'')
-::- Each string in the list MUST be a valid extension code. The meaning of each code is described independently as part of the extension definition.
-
-A miner SHOULD advertise all its available features.
+::- Each string in the list MUST be a valid extension code. The meaning of each code is described independently as part of the extension definition. A miner SHOULD advertise all its available features.
 
 * '''extension-parameters''' (required, ''Map of (String -> Any)'')
 ::- Parameters of the requested/allowed extensions from the first parameter.
@@ -116,17 +114,19 @@ A miner SHOULD advertise all its available features.
 '''Return value''':
 
 * ''Map of (String -> Any)''
-::- Each code from the '''extensions''' list MUST have a defined return value (_TExtensionCode_ -> _TExtensionResult_). This way the miner knows if the extension is activated or not. E.g. <code>{"version-rolling":false}</code> for unsupported version rolling.
+::- Each code from the '''extensions''' list MUST have a defined return value (''TExtensionCode'' -> ''TExtensionResult''). This way the miner knows if the extension is activated or not. E.g. <code>{"version-rolling":false}</code> for unsupported version rolling.
 ::- Some extensions need additional information to be delivered to the miner. The return value map is used for this purpose.
 
 
 Example request (new-lines added):
 
+<pre>
  {"method": "mining.configure",
   "id": 1,
   "params": [["minimum-difficulty", "version-rolling"],
 	     {"minimum-difficulty.value": 2048,
 	      "version-rolling.mask": "1fffe000", "version-rolling.min-bit-count": 2}]}
+</pre>
 
 (The miner requests extensions <code>"version-rolling"</code> and
 <code>"minimum-difficulty"</code>. It sets the parameters according to the extensions'
@@ -134,12 +134,13 @@ definitions.)
 
 Example result (new-lines added):
 
+<pre>
  {"error": null,
   "id": 1,
   "result": {"version-rolling": true,
 	     "version-rolling.mask": "18000000",
 	     "minimum-difficulty": true}}
-
+</pre>
 
 =Defined extensions=
 
@@ -188,7 +189,7 @@ send the mask, in this case a default full mask is used.
 '''Extension return values''':
 
 * '''"version-rolling"''' (required, ''TExtensionResult'')
-:- When responded with <code>true</code>, the server will accept new parameter of '''"mining.submit"''', see later.
+::- When responded with <code>true</code>, the server will accept new parameter of '''"mining.submit"''', see later.
 
 * '''"version-rolling.mask"''' (required, ''TMask'')
 ::- Bits set to 1 are allowed to be changed by the miner. If a miner changes bits with mask value 0, the server will reject the submit.
