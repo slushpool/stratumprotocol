@@ -17,8 +17,8 @@
 
 This BIP provides a generic mechanism for specifying stratum protocol
 extensions. At the same time, one of the important extensions that is
-specified by this BIP is configuration of bits on nVersion field of
-bitcoin block header use for "version rolling".
+specified by this BIP is configuration of bits for "version rolling"
+in nVersion field of bitcoin block header.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
