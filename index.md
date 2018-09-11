@@ -2,7 +2,7 @@
 
 ## Motivation
 
-Afer reviewing the new Blockchain [Defensive Patent License - BPDL](https://www.asicboost.com/single-post/2018/03/01/offering-announcement-blockchain-defensive-patent-license/), we think it would be beneficial for the community to have a central place for the stratum protocol specification. At the same time, we have been working on a proposal for [stratum protocol extensions](https://github.com/slushpool/bips/blob/stratum-extensions/bip-stratum-extension.mediawiki) and associated [PR](https://github.com/bitcoin/bips/pull/709).
+Afer reviewing the new Blockchain [Defensive Patent License - BPDL](https://www.asicboost.com/single-post/2018/03/01/offering-announcement-blockchain-defensive-patent-license/), we think it would be beneficial for the community to have a central place for the stratum protocol specification. At the same time, the proposal for stratum protocol extensions has been approved and marked as [BIP310](https://github.com/bitcoin/bips/blob/master/bip-0310.mediawiki).
 
 ## Basic Stratum specification
 
